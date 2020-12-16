@@ -21,3 +21,7 @@ func Set(key, val []byte) error {
 func Get(key []byte) (val []byte, err error) {
 	return cache.Get(key)
 }
+
+func Del(key []byte) bool {
+	return cache.Del(key)
+}
