@@ -1,0 +1,11 @@
+
+###
+POST http://localhost:8888/api/task
+Content-Type: application/x-www-form-urlencoded
+
+id=123&app_name=haha&cron=c123
+
+###
+GET http://localhost:8888/api/task/b80c7f33-2ea4-4c8d-a786-19a102378262
+
+###
