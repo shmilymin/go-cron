@@ -4,27 +4,25 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"go-cron/models"
-	u "go-cron/pkg/util"
+	u "go-cron/pkg/utils"
 	"log"
 )
 
-const task_ids_key = "task_ids"
-
 func Router(r *gin.RouterGroup) {
-	// 新增
+	// 新增or修改
 	r.POST("", func(c *gin.Context) {
 		task := &models.Task{}
 		if e := c.Bind(task); e != nil {
 			log.Println(e)
 		}
-		id := u.UUID()
-		task.Id = id
-		log.Println(task)
-		json, e := json.Marshal(task)
-		if e != nil {
-			log.Println(e)
+		now := u.Now()
+		task.CreateTime = now
+		task.UpdateTime = now
+		if task.Id == "" {
+			task.Id = u.UUID()
 		}
-		u.Set([]byte(id), json)
+		log.Println(task)
+
 		u.Ok(c)
 	})
 	// 根据id查找
@@ -40,16 +38,18 @@ func Router(r *gin.RouterGroup) {
 		}
 		u.OkData(c, task)
 	})
-	// 修改
-	r.PUT("", func(c *gin.Context) {
-
-	})
 	// 查询全部
 	r.GET("", func(c *gin.Context) {
+		p := &u.Page{}
+		c.Bind(&p)
 
 	})
 	// 删除
 	r.DELETE(":id", func(c *gin.Context) {
-
+		id := c.Param("id")
+		if u.Del([]byte(id)) {
+			u.Ok(c)
+		}
+		u.Err(c)
 	})
 }

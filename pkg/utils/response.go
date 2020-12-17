@@ -1,4 +1,4 @@
-package util
+package utils
 
 import (
 	"github.com/gin-gonic/gin"
@@ -20,14 +20,14 @@ func OkData(c *gin.Context, data interface{}) {
 	})
 }
 
-func Fail(c *gin.Context) {
+func Err(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "fail",
 	})
 }
 
-func FailMsg(c *gin.Context, msg string) {
+func ErrMsg(c *gin.Context, msg string) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  msg,
