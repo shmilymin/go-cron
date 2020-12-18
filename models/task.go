@@ -1,43 +1,57 @@
 package models
 
 import (
-	"encoding/json"
 	u "go-cron/pkg/utils"
 	"log"
 )
 
+var tasks []Task
+
+type Tasks []Task
+
 type Task struct {
-	Id         string `form:"id" json:"id"`
-	AppName    string `form:"app_name" json:"app_name"`
-	TaskName   string `form:"task_name" json:"task_name"`
-	Cron       string `form:"cron" json:"cron"`
-	CreateTime string `form:"create_time" json:"create_time"`
-	UpdateTime string `form:"update_time" json:"update_time"`
+	Model
+	AppName  string `form:"app_name"`
+	TaskName string `form:"task_name"`
+	Cron     string `form:"cron"`
 }
 
-const ids = "task-ids"
+// 新增
+func (m *Task) Save() {
+	m.Id = uint64(len(tasks) + 1)
+	tasks = append(tasks, *m)
+}
 
-func (m *Task) addCache() error {
-	ids, e := u.Get([]byte(ids))
-	if e != nil {
-		return e
+// 修改
+func (m *Task) Update() {
+	m = &tasks[m.Id-1 : m.Id][0]
+}
+
+// 删除
+func (m *Task) Del() {
+	tasks = append(tasks[:m.Id-1], tasks[m.Id:]...)
+}
+
+// 列表
+func (ms *Tasks) List(p *u.Page) {
+	len := len(tasks)
+	idx1 := (p.Page - 1) * p.Limit
+	idx2 := p.Page * p.Limit
+	if idx2 >= len {
+		idx2 = len
 	}
-	var taskIds []string
-	if e := json.Unmarshal(ids, &taskIds); e != nil {
-		return e
-	}
-	taskIds = append(taskIds, m.Id)
-	ids, e = json.Marshal(taskIds)
-	if e != nil {
-		return e
+	list := tasks[idx1:idx2]
+	log.Println(list)
+	var ts [10]Task
+	for idx, b := range list {
+		ts[idx] = b
 	}
 
-	// 保存定时任务
-	json, e := json.Marshal(m)
-	if e != nil {
-		log.Println(e)
-	}
-	if e = u.Set([]byte(m.Id), json); e != nil {
-		log.Println(e)
-	}
+	log.Println(ts)
+	log.Println(copy(*ms, list))
+}
+
+// 总数
+func (m *Task) Count() int {
+	return len(tasks)
 }

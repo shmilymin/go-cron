@@ -1,11 +1,11 @@
 package task
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"go-cron/models"
 	u "go-cron/pkg/utils"
 	"log"
+	"strconv"
 )
 
 func Router(r *gin.RouterGroup) {
@@ -15,41 +15,33 @@ func Router(r *gin.RouterGroup) {
 		if e := c.Bind(task); e != nil {
 			log.Println(e)
 		}
-		now := u.Now()
+		now := u.NowTime()
 		task.CreateTime = now
 		task.UpdateTime = now
-		if task.Id == "" {
-			task.Id = u.UUID()
-		}
 		log.Println(task)
-
+		if task.Id == 0 {
+			task.Save()
+		} else {
+			task.Update()
+		}
 		u.Ok(c)
-	})
-	// 根据id查找
-	r.GET(":id", func(c *gin.Context) {
-		id := c.Param("id")
-		val, err := u.Get([]byte(id))
-		if err != nil {
-			log.Println(err)
-		}
-		task := models.Task{}
-		if err := json.Unmarshal(val, &task); err != nil {
-			log.Println(err)
-		}
-		u.OkData(c, task)
 	})
 	// 查询全部
 	r.GET("", func(c *gin.Context) {
 		p := &u.Page{}
 		c.Bind(&p)
-
+		task := &models.Task{}
+		c.Bind(&task)
+		tasks := models.Tasks{}
+		tasks.List(p)
+		count := task.Count()
+		u.OkData(c, map[string]interface{}{"tasks": tasks, "count": count})
 	})
 	// 删除
 	r.DELETE(":id", func(c *gin.Context) {
-		id := c.Param("id")
-		if u.Del([]byte(id)) {
-			u.Ok(c)
-		}
-		u.Err(c)
+		task := &models.Task{}
+		task.Id, _ = strconv.ParseUint(c.Param("id"), 10, 64)
+		task.Del()
+		u.Ok(c)
 	})
 }
