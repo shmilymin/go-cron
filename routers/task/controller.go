@@ -29,11 +29,14 @@ func Router(r *gin.RouterGroup) {
 	// 查询全部
 	r.GET("", func(c *gin.Context) {
 		p := &u.Page{}
-		c.Bind(&p)
+		if e := c.Bind(p); e != nil {
+			log.Println(e)
+		}
 		task := &models.Task{}
-		c.Bind(&task)
-		tasks := models.Tasks{}
-		tasks.List(p)
+		if e := c.Bind(task); e != nil {
+			log.Println(e)
+		}
+		tasks := task.List(p)
 		count := task.Count()
 		u.OkData(c, map[string]interface{}{"tasks": tasks, "count": count})
 	})

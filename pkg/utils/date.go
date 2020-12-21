@@ -11,12 +11,12 @@ func NowTime() time.Time {
 
 // 当期日期时间
 func NowDT() string {
-	return time.Now().Format(dt)
+	return NowTime().Format(dt)
 }
 
 // 当前日期
 func NowD() string {
-	return time.Now().Format(d)
+	return NowTime().Format(d)
 }
 
 // 转换为日期时间

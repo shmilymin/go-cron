@@ -7,8 +7,6 @@ import (
 
 var tasks []Task
 
-type Tasks []Task
-
 type Task struct {
 	Model
 	AppName  string `form:"app_name"`
@@ -33,22 +31,16 @@ func (m *Task) Del() {
 }
 
 // 列表
-func (ms *Tasks) List(p *u.Page) {
-	len := len(tasks)
+func (m *Task) List(p *u.Page) (ts []Task) {
+	l := len(tasks)
 	idx1 := (p.Page - 1) * p.Limit
 	idx2 := p.Page * p.Limit
-	if idx2 >= len {
-		idx2 = len
+	if idx2 >= l {
+		idx2 = l
 	}
 	list := tasks[idx1:idx2]
 	log.Println(list)
-	var ts [10]Task
-	for idx, b := range list {
-		ts[idx] = b
-	}
-
-	log.Println(ts)
-	log.Println(copy(*ms, list))
+	return list
 }
 
 // 总数

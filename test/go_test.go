@@ -36,15 +36,5 @@ func TestSlice(t *testing.T) {
 }
 
 func TestDate(t *testing.T) {
-	t.Log(utils.Now())
-}
-
-type Atest struct {
-	N1 int
-	N2 int
-}
-
-func TestNum(t *testing.T) {
-	var i int
-	t.Log(i)
+	t.Log(utils.NowDT())
 }
