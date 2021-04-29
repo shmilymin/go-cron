@@ -1,38 +1,26 @@
 package test
 
 import (
-	"encoding/json"
+	"go-cron/models"
 	"go-cron/pkg/utils"
-	"log"
-	"strconv"
 	"testing"
 )
 
 func TestSlice(t *testing.T) {
-	var keys []string
-	for i := 0; i < 10; i++ {
-		keys = append(keys, "aaa"+strconv.Itoa(i))
-	}
-	tmp := keys[1:2]
-	log.Println(tmp)
-	tmp[0] = "aaa888"
-	t.Log(keys)
-	page := 1
-	limit := 4
-	idx1 := (page - 1) * limit
-	idx2 := limit * page
-	vs := keys[idx1:idx2]
-	t.Log(vs)
-	jsonByte, e := json.Marshal(vs)
-	if e != nil {
-		t.Error(e)
-	}
-	t.Log(string(jsonByte))
-	var newKeys []string
-	if e := json.Unmarshal(jsonByte, &newKeys); e != nil {
-		t.Error(e)
-	}
-	t.Log(newKeys)
+	var tasks []models.Task
+	task1 := models.Task{}
+	task1.Id = 1
+	task1.TaskName = "t1"
+	tasks = append(tasks, task1)
+	t.Log(tasks)
+	task2 := models.Task{}
+	task2.Id = 2
+	task2.TaskName = "t2"
+	tasks = append(tasks, task2)
+	t.Log(tasks)
+	task := &tasks[1:2][0]
+	task.TaskName = "tt2"
+	t.Log(tasks)
 }
 
 func TestDate(t *testing.T) {
